@@ -19,7 +19,6 @@ appId: "1:831286879311:web:4938aca6bece033c4fb63a"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-console.log("Firebase Connected Successfully");
 
 window.saveInquiry = async function(data) {
 
