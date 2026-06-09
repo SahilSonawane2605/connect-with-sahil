@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
 import {
 getFirestore,
 collection,
@@ -15,21 +14,18 @@ storageBucket: "sage-connect-2d2e0.firebasestorage.app",
 messagingSenderId: "831286879311",
 appId: "1:831286879311:web:4938aca6bece033c4fb63a"
 };
-console.log("Firebase Connected Successfully");
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.saveInquiry = async function(data) {
+console.log("Firebase Connected Successfully");
 
-  console.log("Saving inquiry...", data);
-
-  return true;
-};
-
+window.saveInquiry = async function (data) {
 try {
+console.log("Saving inquiry...", data);
 
 ```
-await addDoc(
+const docRef = await addDoc(
   collection(db, "inquiries"),
   {
     ...data,
@@ -37,16 +33,18 @@ await addDoc(
   }
 );
 
+console.log("Saved successfully:", docRef.id);
+
 return true;
 ```
 
-} catch (err) {
+} catch (error) {
 
 ```
-console.error(err);
+console.error("Firestore Error:", error);
 
 return false;
 ```
 
 }
-;
+};
