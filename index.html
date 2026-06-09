@@ -555,7 +555,7 @@
   }
 </style>
 </head>
-<script type="module" src="firebase.js"></script>>
+<script type="module" src="firebase.js"></script>
 <body>
 <!-- ── CONTACT FORM ──────────────────────────────── -->
 <div class="page-wrap">
@@ -1014,6 +1014,39 @@ What would you like to know?`);
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 90) + 'px';
   }
+  function resetForm() {
+
+  document.getElementById('successOverlay')
+    .classList.remove('show');
+
+  document.getElementById('formBody')
+    .classList.remove('hidden');
+
+  document.getElementById('name').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('mobile').value = '';
+  document.getElementById('message').value = '';
+
+  document
+    .querySelectorAll('.chip')
+    .forEach(chip => chip.classList.remove('selected'));
+
+  document
+    .querySelector('.chip')
+    .classList.add('selected');
+
+  document
+    .querySelectorAll('.field-group')
+    .forEach(g => {
+      g.classList.remove('error');
+      g.classList.remove('valid');
+    });
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
 </script>
 </body>
 </html>
