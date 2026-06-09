@@ -655,8 +655,8 @@
        Your inquiry has been securely delivered.
        You'll typically receive a response within 24–48 hours.</p>
       <div class="success-id" id="ticketId">REF: #000000</div>
-      <button class="submit-btn" style="max-width:240px;font-size:0.82rem;" onclick="resetForm()">
-        ↩ SEND ANOTHER MESSAGE
+      <button class="submit-btn" style="max-width:240px;font-size:0.82rem;" onclick="window.resetForm ? window.resetForm() : location.reload()">
+                 ↩ SEND ANOTHER MESSAGE
       </button>
     </div>
   </div>
