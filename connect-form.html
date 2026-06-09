@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect — Sahil Sonawane</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root {
+    --cyan: #00f5ff;
+    --cyan-dim: rgba(0,245,255,0.12);
+    --purple: #b060ff;
+    --bg: #070b14;
+    --bg2: #0c1220;
+    --bg3: #111827;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(0,245,255,0.15);
+    --border-hover: rgba(0,245,255,0.4);
+    --success: #10ffa0;
+    --error: #ff4f6d;
+    --grid: rgba(0,245,255,0.03);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    overflow-x: hidden;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(176,96,255,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,245,255,0.04) 0%, transparent 60%);
+    background-size: 48px 48px, 48px 48px, 100% 100%, 100% 100%;
+  }
+  /* ── FORM CARD ───────────────────────────────── */
+  .page-wrap {
+    width: 100%;
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,245,255,0.06), 0 0 0 1px var(--border);
+  }
+  /* ── LEFT PANEL ──────────────────────────────── */
+  .left-panel {
+    background: var(--bg2);
+    padding: 3rem 2.5rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .left-panel::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(176,96,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .panel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 4px;
+    padding: 6px 12px;
+    width: fit-content;
+    background: var(--cyan-dim);
+  }
+  .panel-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+  .panel-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 30%, var(--cyan) 70%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .panel-sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 360px;
+  }
+  .info-grid { display: flex; flex-direction: column; gap: 1rem; }
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .info-item:hover { border-color: var(--border-hover); background: var(--cyan-dim); }
+  .info-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: var(--cyan-dim);
+    border: 1px solid rgba(0,245,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+  .info-label { color: var(--muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+  .info-val { color: var(--text); font-weight: 500; font-size: 0.88rem; }
+  .status-bar {
+    margin-top: auto;
+    padding: 14px 16px;
+    border: 1px solid rgba(16,255,160,0.2);
+    border-radius: 10px;
+    background: rgba(16,255,160,0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success);
+    animation: blink 2s infinite;
+    flex-shrink: 0;
+  }
+  /* ── RIGHT PANEL ─────────────────────────────── */
+  .right-panel { background: var(--bg3); display: flex; flex-direction: column; }
+  .form-body {
+    padding: 2.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .form-body::-webkit-scrollbar { width: 4px; }
+  .form-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .form-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .form-sub { font-size: 0.85rem; color: var(--muted); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .field-label .req { color: var(--cyan); }
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .field-input:hover { border-color: rgba(0,245,255,0.3); }
+  .field-input:focus {
+    border-color: var(--cyan);
+    background: rgba(0,245,255,0.04);
+    box-shadow: 0 0 0 3px rgba(0,245,255,0.08);
+  }
+  .field-input::placeholder { color: rgba(100,116,139,0.5); }
+  textarea.field-input { resize: none; min-height: 110px; line-height: 1.6; }
+  .reason-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--border-hover); color: var(--text); }
+  .chip.selected { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(176,96,255,0.12));
+    border: 1px solid rgba(0,245,255,0.35);
+    border-radius: 12px;
+    color: var(--cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .submit-btn:hover {
+    background: linear-gradient(135deg, rgba(0,245,255,0.22), rgba(176,96,255,0.18));
+    border-color: var(--cyan);
+    box-shadow: 0 0 24px rgba(0,245,255,0.15);
+    transform: translateY(-1px);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .field-error { font-size: 0.75rem; color: var(--error); font-family: 'JetBrains Mono', monospace; display: none; }
+  .field-group.error .field-input { border-color: var(--error); }
+  .field-group.error .field-error { display: block; }
+  .field-group.valid .field-input { border-color: rgba(16,255,160,0.4); }
+  .success-overlay {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    flex: 1;
+  }
+  .success-overlay.show { display: flex; }
+  .form-body.hidden { display: none; }
+  .success-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 2px solid var(--success);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(16,255,160,0.08);
+    color: var(--success); font-size: 32px;
+  }
+  .success-title { font-size: 1.5rem; font-weight: 700; color: var(--success); }
+  .success-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 280px; }
+  .success-id { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); border: 1px solid var(--border); padding: 6px 16px; border-radius: 6px; }
+  /* ── FLOATING CHATBOT ────────────────────────── */
+  .chat-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,245,255,0.2), rgba(176,96,255,0.18));
+    border: 1px solid rgba(0,245,255,0.5);
+    color: var(--cyan);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 30px rgba(0,245,255,0.2), 0 4px 20px rgba(0,0,0,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 1000;
+  }
+  .chat-fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 44px rgba(0,245,255,0.35), 0 4px 24px rgba(0,0,0,0.6);
+  }
+  .chat-fab svg { width: 26px; height: 26px; transition: opacity 0.2s; }
+  .chat-fab .icon-open { display: flex; }
+  .chat-fab .icon-close { display: none; }
+  .chat-fab.open .icon-open { display: none; }
+  .chat-fab.open .icon-close { display: flex; }
+  .fab-ping {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,245,255,0.4);
+    z-index: 999;
+    animation: ping 2.5s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes ping {
+    0% { transform: scale(1); opacity: 0.6; }
+    80%, 100% { transform: scale(1.7); opacity: 0; }
+  }
+  .fab-tooltip {
+    position: fixed;
+    bottom: 38px;
+    right: 100px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 999;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .fab-tooltip::after {
+    content: '';
+    position: absolute;
+    right: -6px; top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right: none;
+    border-left-color: var(--border);
+  }
+  .fab-tooltip.visible { opacity: 1; transform: translateX(0); }
+  .chat-window {
+    position: fixed;
+    bottom: 104px;
+    right: 28px;
+    width: 380px;
+    height: 540px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,245,255,0.1), 0 20px 60px rgba(0,0,0,0.7);
+    z-index: 998;
+    transform: scale(0.88) translateY(20px);
+    transform-origin: bottom right;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+  }
+  .chat-window.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+  .chat-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg3);
+    flex-shrink: 0;
+  }
+  .chat-avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--cyan-dim), rgba(176,96,255,0.15));
+    border: 1px solid rgba(0,245,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+  .chat-header-info { flex: 1; }
+  .chat-header-name { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+  .chat-header-status {
+    font-size: 0.72rem;
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; align-items: center; gap: 5px;
+    margin-top: 2px;
+  }
+  .chat-header-status::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--success);
+    animation: blink 2s infinite;
+  }
+  .chat-clear-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    transition: all 0.18s;
+    letter-spacing: 0.5px;
+  }
+  .chat-clear-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem 1.2rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 3px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .msg { max-width: 82%; animation: fadeUp 0.22s ease; }
+  .msg.bot { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .msg-meta {
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .bot-icon {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    background: var(--cyan-dim);
+    border: 1px solid rgba(0,245,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cyan);
+  }
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+  .msg.bot .msg-bubble {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-top-left-radius: 3px;
+  }
+  .msg.user .msg-bubble {
+    background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(176,96,255,0.08));
+    border: 1px solid rgba(0,245,255,0.22);
+    color: var(--text);
+    border-top-right-radius: 3px;
+  }
+  .typing-wrap {
+    display: none;
+    align-self: flex-start;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    border-top-left-radius: 3px;
+    gap: 5px;
+    margin-bottom: 0.5rem;
+  }
+  .typing-wrap.show { display: flex; }
+  .t-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+    animation: bounce 1.3s infinite ease-in-out;
+  }
+  .t-dot:nth-child(2) { animation-delay: 0.17s; }
+  .t-dot:nth-child(3) { animation-delay: 0.34s; }
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); opacity: 0.35; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+  .quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0.6rem 1.2rem 0.4rem;
+    flex-shrink: 0;
+  }
+  .qchip {
+    padding: 5px 12px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .qchip:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+  .chat-input-row {
+    padding: 0.8rem 1rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.86rem;
+    outline: none;
+    resize: none;
+    max-height: 90px;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--cyan); }
+  .chat-input::placeholder { color: rgba(100,116,139,0.45); }
+  .chat-send {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,245,255,0.18), rgba(176,96,255,0.14));
+    border: 1px solid rgba(0,245,255,0.4);
+    color: var(--cyan);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .chat-send:hover {
+    background: rgba(0,245,255,0.24);
+    box-shadow: 0 0 16px rgba(0,245,255,0.2);
+    transform: scale(1.06);
+  }
+  .chat-send svg { width: 16px; height: 16px; }
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 780px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .left-panel { padding: 2rem 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+    .panel-title { font-size: 2rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-body { padding: 1.5rem; }
+    .chat-window { width: calc(100vw - 32px); right: 16px; bottom: 90px; }
+    .chat-fab { right: 16px; bottom: 16px; }
+    .fab-ping { right: 16px; bottom: 16px; }
+    .fab-tooltip { right: 88px; }
+  }
+</style>
+</head>
+<script type="module" src="firebase.js"></script>>
+<body>
+<!-- ── CONTACT FORM ──────────────────────────────── -->
+<div class="page-wrap">
+  <div class="left-panel">
+    <div>
+      <div class="panel-badge">SAHIL_SONAWANE · CE STUDENT</div>
+    </div>
+    <div>
+      <h1 class="panel-title">Let's Connect &<br>Build The Future.</h1>
+      <p class="panel-sub">
+        Computer Engineering student passionate about Artificial Intelligence, Machine Learning, Generative AI, and building projects that create real-world impact. Reach out, collaborate, or learn more about my work through SAGE.
+      </p>
+    </div>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Email</div>
+          <div class="info-val">sahilsonawane25005@gmail.com</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Response Time</div>
+          <div class="info-val">Usually within 24–48 hours</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Open To</div>
+          <div class="info-val">Internships • Research • Collaborations</div>
+        </div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      SYS: SAGE_ONLINE · AI · ML · GenAI · CLOUD · CV · CYBERSEC
+    </div>
+  </div>
+  <!-- RIGHT: FORM ONLY -->
+  <div class="right-panel">
+    <div class="form-body" id="formBody">
+      <div>
+        <div class="form-title">Send a Message</div>
+        <div class="form-sub">Fill in the details below and we'll get back to you shortly.</div>
+      </div>
+      <div class="form-row">
+        <div class="field-group" id="grp-name">
+          <label class="field-label" for="name">Full Name <span class="req">*</span></label>
+          <input class="field-input" type="text" id="name" placeholder="John Doe" autocomplete="name">
+          <span class="field-error">Name is required.</span>
+        </div>
+        <div class="field-group" id="grp-email">
+          <label class="field-label" for="email">Email Address <span class="req">*</span></label>
+          <input class="field-input" type="email" id="email" placeholder="you@domain.com" autocomplete="email">
+          <span class="field-error">Valid email required.</span>
+        </div>
+      </div>
+      <div class="field-group" id="grp-mobile">
+        <label class="field-label" for="mobile">Mobile Number <span class="req">*</span></label>
+        <input class="field-input" type="tel" id="mobile" placeholder="+91 1234567890" autocomplete="tel">
+        <span class="field-error">Valid mobile number required.</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Reason to Connect</label>
+        <div class="reason-chips">
+          <span class="chip selected" onclick="toggleChip(this)">General Inquiry</span>
+          <span class="chip" onclick="toggleChip(this)">Project Collaboration</span>
+          <span class="chip" onclick="toggleChip(this)">Internship Opportunity</span>
+          <span class="chip" onclick="toggleChip(this)">Hackathon Team-Up</span>
+          <span class="chip" onclick="toggleChip(this)">AI/ML Discussion</span>
+          <span class="chip" onclick="toggleChip(this)">Student Networking</span>
+        </div>
+      </div>
+      <div class="field-group" id="grp-message">
+        <label class="field-label" for="message">Message <span class="req">*</span></label>
+        <textarea class="field-input" id="message" placeholder="Describe your project, idea, or question in detail..."></textarea>
+        <span class="field-error">Message cannot be empty.</span>
+      </div>
+      <button class="submit-btn" onclick="submitForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        TRANSMIT MESSAGE
+      </button>
+    </div>
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Message Delivered 🚀</div>
+      <p class="success-sub">Thanks for reaching out!
+       Your inquiry has been securely delivered.
+       You'll typically receive a response within 24–48 hours.</p>
+      <div class="success-id" id="ticketId">REF: #000000</div>
+      <button class="submit-btn" style="max-width:240px;font-size:0.82rem;" onclick="resetForm()">
+        ↩ SEND ANOTHER MESSAGE
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ── FLOATING CHATBOT ───────────────────────────── -->
+<div class="fab-ping" id="fabPing"></div>
+<div class="fab-tooltip" id="fabTooltip">Ask SAGE about Sahil</div>
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Toggle AI chat">
+  <span class="icon-open">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>
+  </span>
+  <span class="icon-close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </span>
+</button>
+<div class="chat-window" id="chatWindow" aria-label="AI Chat Assistant">
+  <div class="chat-header">
+    <div class="chat-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">SAGE — Sahil's AI Guide Engine</div>
+      <div class="chat-header-status">Online · Powered by AI</div>
+    </div>
+    <button class="chat-clear-btn" onclick="clearChat()">CLEAR</button>
+  </div>
+  <div class="chat-messages" id="chatMsgs">
+    <div class="msg bot">
+      <div class="msg-meta">
+        <div class="bot-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        SAGE
+      </div>
+      <div class="msg-bubble">Hi! I'm SAGE 👋<br><br>I'm Sahil's AI assistant.<br><br>I can help you learn about:<br>🚀 Projects<br>💻 Skills<br>🎓 Education<br>🧠 AI & Machine Learning<br>☁️ Cloud Computing<br>🏆 Hackathons<br>🤝 Collaborations<br>💼 Internships<br><br>What would you like to know?</div>
+    </div>
+    <div class="typing-wrap" id="typingWrap">
+      <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+    </div>
+  </div>
+  <div class="quick-chips" id="quickChips">
+    <button class="qchip" onclick="quickSend('What projects has Sahil built?')">Projects</button>
+    <button class="qchip" onclick="quickSend('What are Sahil\'s skills?')">Skills</button>
+    <button class="qchip" onclick="quickSend('Is Sahil open to internships?')">Internships</button>
+    <button class="qchip" onclick="quickSend('Can I collaborate with Sahil?')">Collaborate</button>
+  </div>
+  <div class="chat-input-row">
+    <textarea class="chat-input" id="chatInput" placeholder="Type a message…" rows="1"
+      onkeydown="chatEnter(event)" oninput="chatResize(this)"></textarea>
+    <button class="chat-send" onclick="chatSend()" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+<script>
+  /* ── FAB + WINDOW TOGGLE ── */
+  let chatOpen = false;
+  const fab    = document.getElementById('chatFab');
+  const win    = document.getElementById('chatWindow');
+  const ping   = document.getElementById('fabPing');
+  const tip    = document.getElementById('fabTooltip');
+  setTimeout(() => tip.classList.add('visible'), 1200);
+  setTimeout(() => tip.classList.remove('visible'), 4500);
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    fab.classList.toggle('open', chatOpen);
+    win.classList.toggle('open', chatOpen);
+    ping.style.display = chatOpen ? 'none' : 'block';
+    if (chatOpen) {
+      tip.classList.remove('visible');
+      setTimeout(() => document.getElementById('chatInput').focus(), 300);
+      scrollMsgs();
+    }
+  }
+  /* ── FORM ── */
+  function toggleChip(el) { el.classList.toggle('selected'); }
+  function validate(id, fn) {
+    const el  = document.getElementById(id);
+    const grp = document.getElementById('grp-' + id);
+    const ok  = fn(el.value.trim());
+    grp.classList.toggle('error', !ok);
+    grp.classList.toggle('valid', ok);
+    return ok;
+  }async function submitForm() {
+
+  const eRe  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phRe = /^[+\d\s\-().]{7,20}$/;
+
+  const ok =
+    validate('name',    v => v.length > 1) &&
+    validate('email',   v => eRe.test(v)) &&
+    validate('mobile',  v => phRe.test(v)) &&
+    validate('message', v => v.length > 5);
+
+  if (!ok) return;
+
+  const reasons = [];
+
+  document
+    .querySelectorAll('.chip.selected')
+    .forEach(chip => reasons.push(chip.innerText));
+
+  const inquiry = {
+
+    name:
+      document.getElementById('name').value.trim(),
+
+    email:
+      document.getElementById('email').value.trim(),
+
+    mobile:
+      document.getElementById('mobile').value.trim(),
+
+    reasons,
+
+    message:
+      document.getElementById('message').value.trim()
+  };
+
+  const saved =
+    await window.saveInquiry(inquiry);
+
+  if (!saved) {
+
+    alert(
+      "Unable to submit inquiry. Please try again."
+    );
+
+    return;
+  }
+
+  document
+    .getElementById('formBody')
+    .classList.add('hidden');
+
+  const ref =
+    '#' +
+    Math.random()
+      .toString(36)
+      .substr(2,6)
+      .toUpperCase();
+
+  document
+    .getElementById('ticketId')
+    .textContent =
+    'REF: ' + ref;
+
+  document
+    .getElementById('successOverlay')
+    .classList.add('show');
+}
+  function getSageResponse(message) {
+    const msg = message.toLowerCase();
+    // PROJECTS
+    if (msg.includes("project") || msg.includes("built") || msg.includes("portfolio")) {
+      return `🚀 Here are some of Sahil's projects:
+• GestureVerse
+AI-powered gesture-controlled particle simulation using hand tracking and Three.js.
+• Smart Traffic Control Using OpenCV
+Computer vision based traffic optimization system.
+• Flight Reservation Simulator
+Python-based reservation system implementing searching and sorting algorithms.
+• Stress Monitoring Dashboard
+Flask + Arduino dashboard for monitoring stress-related metrics.
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.
+Would you like details about any specific project?`;
+    }
+    // SKILLS
+    if (msg.includes("skill") || msg.includes("technology") || msg.includes("tech stack")) {
+      return `💻 Sahil's Technical Skills
+Languages:
+• Python
+• JavaScript
+• HTML
+• CSS
+Technologies:
+• Flask
+• OpenCV
+• Firebase
+• Git
+• GitHub
+Domains:
+• Artificial Intelligence
+• Machine Learning
+• Generative AI
+• Computer Vision
+• Cloud Computing
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // INTERNSHIPS
+    if (msg.includes("internship") || msg.includes("job") || msg.includes("hire") || msg.includes("opportunity")) {
+      return `🎯 Internship Opportunities
+Sahil is actively looking for internship opportunities in:
+• AI & Machine Learning
+• Generative AI
+• Cloud Computing
+• Software Development
+• Computer Vision
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.
+If you'd like to discuss an opportunity, please submit the contact form on this page.`;
+    }
+    // COLLABORATION
+    if (msg.includes("collaborate") || msg.includes("collaboration") || msg.includes("team")) {
+      return `🤝 Collaboration
+Sahil is open to collaborating on:
+• AI Projects
+• Machine Learning Applications
+• Hackathons
+• Open Source Contributions
+• Web Development Projects
+• Computer Vision Solutions
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.
+Feel free to send a message through the contact form to connect.`;
+    }
+    // HACKATHONS
+    if (msg.includes("hackathon")) {
+      return `🏆 Hackathons
+Sahil enjoys participating in hackathons and building innovative solutions under time constraints. His hackathon interests include:
+• AI-powered products
+• Smart automation systems
+• Computer Vision applications
+• Productivity tools
+• Real-world problem solving
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // EDUCATION
+    if (msg.includes("college") || msg.includes("education") || msg.includes("student") || msg.includes("study") || msg.includes("degree")) {
+      return `🎓 Education
+Sahil is a Computer Engineering student.
+He is passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects. He continuously builds projects to gain practical experience and solve real-world problems.`;
+    }
+    // CLOUD COMPUTING
+    if (msg.includes("cloud")) {
+      return `☁️ Cloud Computing
+Cloud Computing is one of Sahil's primary career interests. He is currently exploring:
+• Firebase
+• Cloud Architecture Concepts
+• Scalable Web Applications
+• AI + Cloud Integrations
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // AI & MACHINE LEARNING
+    if (msg.includes("ai") || msg.includes("machine learning") || msg.includes("ml") || msg.includes("generative") || msg.includes("genai")) {
+      return `🧠 AI & Machine Learning
+Sahil is passionate about Artificial Intelligence and Machine Learning. His focus areas include:
+• Generative AI & LLM Applications
+• Computer Vision (OpenCV)
+• AI Automation & Real-world AI Products
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // CONTACT
+    if (msg.includes("contact") || msg.includes("email") || msg.includes("reach") || msg.includes("message")) {
+      return `📬 Contact Information
+The best way to reach Sahil is through the contact form on this page or via email at sahilsonawane@domain.com.
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects. You will usually receive a response within 24–48 hours.`;
+    }
+    // RESUME
+    if (msg.includes("resume") || msg.includes("cv")) {
+      return `📄 Resume & CV
+You can access Sahil's resume using the Resume button/link available on this page.
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // GITHUB
+    if (msg.includes("github")) {
+      return `💻 GitHub
+You can explore Sahil's projects, repositories, and contributions using the GitHub link available on this page.
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // LINKEDIN
+    if (msg.includes("linkedin")) {
+      return `🔗 LinkedIn
+You can connect professionally with Sahil using the LinkedIn button/link available on this page.
+Sahil is a Computer Engineering student passionate about AI, Machine Learning, Generative AI, Cloud Computing, and building real-world projects.`;
+    }
+    // DEFAULT
+    return `Hi! I'm SAGE 👋
+I'm Sahil's AI assistant.
+I can help you learn about:
+🚀 Projects
+💻 Skills
+🎓 Education
+🧠 AI & Machine Learning
+☁️ Cloud Computing
+🏆 Hackathons
+🤝 Collaborations
+💼 Internships
+What would you like to know?`;
+  }
+  function quickSend(text) {
+    addMsg('user', text);
+    showTyping(true);
+    setTimeout(() => {
+      const reply = getSageResponse(text);
+      showTyping(false);
+      addMsg('bot', reply);
+    }, 700);
+  }
+  async function chatSend() {
+    const inp = document.getElementById('chatInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    inp.style.height = 'auto';
+    addMsg('user', text);
+    showTyping(true);
+    setTimeout(() => {
+      const reply = getSageResponse(text);
+      showTyping(false);
+      addMsg('bot', reply);
+    }, 700);
+  }
+  function addMsg(role, text) {
+    const msgs = document.getElementById('chatMsgs');
+    const div  = document.createElement('div');
+    div.className = 'msg ' + role;
+    const meta = role === 'bot'
+      ? `<div class="msg-meta"><div class="bot-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>SAGE</div>`
+      : '';
+    div.innerHTML = meta + `<div class="msg-bubble">${safe(text)}</div>`;
+    msgs.insertBefore(div, document.getElementById('typingWrap'));
+    scrollMsgs();
+  }
+  function safe(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+  function showTyping(on) {
+    document.getElementById('typingWrap').classList.toggle('show', on);
+    scrollMsgs();
+  }
+  function scrollMsgs() {
+    const m = document.getElementById('chatMsgs');
+    m.scrollTop = m.scrollHeight;
+  }
+  function clearChat() {
+    const msgs = document.getElementById('chatMsgs');
+    Array.from(msgs.querySelectorAll('.msg')).forEach(n => n.remove());
+    addMsg('bot', `Hi! I'm SAGE 👋
+I'm Sahil's AI assistant.
+I can help you learn about:
+🚀 Projects
+💻 Skills
+🎓 Education
+🧠 AI & Machine Learning
+☁️ Cloud Computing
+🏆 Hackathons
+🤝 Collaborations
+💼 Internships
+What would you like to know?`);
+    document.getElementById('quickChips').style.display = 'flex';
+  }
+  function chatEnter(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); }
+  }
+  function chatResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+  }
+</script>
+</body>
+</html>
