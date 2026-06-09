@@ -24,7 +24,7 @@ window.saveInquiry = async function (data) {
 try {
 console.log("Saving inquiry...", data);
 
-```
+
 const docRef = await addDoc(
   collection(db, "inquiries"),
   {
@@ -36,15 +36,14 @@ const docRef = await addDoc(
 console.log("Saved successfully:", docRef.id);
 
 return true;
-```
+
 
 } catch (error) {
 
-```
+
 console.error("Firestore Error:", error);
 
 return false;
-```
 
 }
 };
